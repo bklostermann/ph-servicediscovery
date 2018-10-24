@@ -20,7 +20,8 @@ public class ServiceAApplication {
 	}
 	
 	@RequestMapping("/")
-	public String message() {
+	public String message() throws Exception {
+		Thread.sleep(3000);
 		return "Served by " + instance;
 	}
 }
