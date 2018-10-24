@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
+import com.netflix.discovery.shared.Application;
 
 @EnableDiscoveryClient
 @SpringBootApplication
@@ -36,6 +37,15 @@ public class ClientApplication {
 		RestTemplate restTemplate = restTemplateBuiler.build();
 		ResponseEntity<String> response = restTemplate.exchange(baseUrl, HttpMethod.GET, null, String.class);
 		
+		return response.getBody();
+	}
+	
+	@RequestMapping("/fromnode")
+	public String callService2() {
+		InstanceInfo instanceInfo = client.getNextServerFromEureka("node-service", false);
+		String baseUrl = instanceInfo.getHomePageUrl();
+		RestTemplate restTemplate = restTemplateBuiler.build();
+		ResponseEntity<String> response = restTemplate.exchange(baseUrl, HttpMethod.GET, null, String.class);
 		return response.getBody();
 	}
 }
