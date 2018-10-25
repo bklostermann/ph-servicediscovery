@@ -21,6 +21,12 @@ public class MyService {
 	}
 	
 	@HystrixCommand(fallbackMethod = "reliable")
+	public String callServiceAWithHystrix() {
+		InstanceInfo instanceInfo = client.getNextServerFromEureka("service-a", false);
+		String baseUrl = instanceInfo.getHomePageUrl();
+		return restTemplate.getForObject(baseUrl, String.class);
+	}
+
 	public String callServiceA() {
 		InstanceInfo instanceInfo = client.getNextServerFromEureka("service-a", false);
 		String baseUrl = instanceInfo.getHomePageUrl();
@@ -28,6 +34,6 @@ public class MyService {
 	}
 	
 	public String reliable() {
-		return "From reliable method";
+		return "Sorry service is unavailable";
 	}
 }

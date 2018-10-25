@@ -21,6 +21,7 @@ public class ServiceAApplication {
 	
 	@RequestMapping("/")
 	public String message() throws Exception {
+		// Circuit has a 1000 timeout by default
 		Thread.sleep(3000);
 		return "Served by " + instance;
 	}

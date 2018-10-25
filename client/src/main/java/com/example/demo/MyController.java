@@ -22,21 +22,18 @@ public class MyController {
 	
 	@Bean
 	public RestTemplate rest(RestTemplateBuilder builder) {
-		return builder.setConnectTimeout(1000).setReadTimeout(1000).build();
+		//return builder.setConnectTimeout(1000).setReadTimeout(1000).build();
+		return builder.build();
 	}
 	
 	@RequestMapping("/a")
 	public String callServiceA(@RequestParam(value = "useProxy", defaultValue="0") boolean useProxy) {
 		
 		if(useProxy) {
-			return myService.callServiceA();
+			return myService.callServiceAWithHystrix();
 		}
 		
-		InstanceInfo instanceInfo = client.getNextServerFromEureka("service-a", false);
-		String baseUrl = instanceInfo.getHomePageUrl();
-		
-		RestTemplate restTemplate = new RestTemplate();
-		return restTemplate.getForObject(baseUrl, String.class);
+		return myService.callServiceA();
 	}
 	
 	@RequestMapping("/b")
