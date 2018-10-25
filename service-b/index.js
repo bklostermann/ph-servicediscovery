@@ -44,18 +44,23 @@ app.get('/stop', (req, res) => {
   client.stop();
 });
 
-app.listen(port, () => {
-    console.log(`Listening on port ${port}!`);
-    // Make service discoverable
-    client.start();
+app.get('/call-a', (req,res) => {
+  // Do stuff....
+
+  callA(req, (data) => {
+    // Do more stuff ...
+    res.send('Service A data [' + data + ']');
+  });
 });
 
-/* 
- * Using discovery to call another service 
- */
-app.get('/call-a', (req,res) => {
+function callA(req, cb) {
   const instances = client.getInstancesByAppId('service-a');
   console.log('Instances: ' + instances.length);
+
+  if(instances.length < 1) {
+    cb("Sorry no service-a running");
+    return;
+  }
 
   http.get(instances[0].homePageUrl, (resp) => {
     let data = '';
@@ -68,10 +73,17 @@ app.get('/call-a', (req,res) => {
     // The whole response has been received. Print out the result.
     resp.on('end', () => {
       console.log(data);
-      res.send("From Java service: " + data);
+      cb(data);
     });
   
   }).on("error", (err) => {
     console.log("Error: " + err.message);
+    cb(err.message);
   });
+}
+
+app.listen(port, () => {
+  console.log(`Listening on port ${port}!`);
+  // Make service discoverable
+  client.start();
 });
