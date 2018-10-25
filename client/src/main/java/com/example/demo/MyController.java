@@ -22,8 +22,7 @@ public class MyController {
 	
 	@Bean
 	public RestTemplate rest(RestTemplateBuilder builder) {
-		//return builder.setConnectTimeout(1000).setReadTimeout(1000).build();
-		return builder.build();
+		return builder.setConnectTimeout(1000).setReadTimeout(1000).build();
 	}
 	
 	@RequestMapping("/a")
