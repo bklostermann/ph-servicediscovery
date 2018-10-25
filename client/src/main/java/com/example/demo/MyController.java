@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,7 +26,12 @@ public class MyController {
 	}
 	
 	@RequestMapping("/a")
-	public String callServiceA() {
+	public String callServiceA(@RequestParam(value = "useProxy", defaultValue="0") boolean useProxy) {
+		
+		if(useProxy) {
+			return myService.callServiceA();
+		}
+		
 		InstanceInfo instanceInfo = client.getNextServerFromEureka("service-a", false);
 		String baseUrl = instanceInfo.getHomePageUrl();
 		
@@ -41,10 +47,4 @@ public class MyController {
 		RestTemplate restTemplate = new RestTemplate();
 		return restTemplate.getForObject(baseUrl, String.class);
 	}
-	
-	@RequestMapping("/a-proxy")
-	public String callServiceAWithHystrix() {
-		return myService.callServiceA();
-	}
-
 }
